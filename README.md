@@ -206,7 +206,6 @@ again. The answer was:
 > I'm not sure I should take a guess at that. What's your favorite
 > programming language?
 
-either says it has no way to know, or guesses generically, because the
 The changed answer demonstrates that the model had access to the fact
 only while the earlier message was included in the request.
 

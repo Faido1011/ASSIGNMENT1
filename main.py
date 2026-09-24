@@ -53,7 +53,13 @@ def choose_model(installed_models):
     for i, name in enumerate(installed_models, start=1):
         print(f"{i}. {name}")
 
-    choice = input(f"Select model [1-{len(installed_models)}] (Enter for default): ").strip()
+    try:
+        choice = input(
+            f"Select model [1-{len(installed_models)}] (Enter for default): "
+        ).strip()
+    except (EOFError, KeyboardInterrupt):
+        print("\nStartup cancelled.")
+        return None
 
     if choice == "":
         # Prefer the configured default if it's actually installed.
@@ -75,8 +81,14 @@ def choose_personality():
     for key, (label, _) in config.PERSONALITY_MODES.items():
         print(f"{key}. {label}")
 
-    choice = input(f"Select mode [Enter for default]: ").strip()
+    try:
+        choice = input("Select mode [Enter for default]: ").strip()
+    except (EOFError, KeyboardInterrupt):
+        print("\nStartup cancelled.")
+        return None
+
     if choice not in config.PERSONALITY_MODES:
+        print("Invalid choice. Using the default personality.")
         choice = config.DEFAULT_PERSONALITY
 
     label, prompt_name = config.PERSONALITY_MODES[choice]
@@ -180,7 +192,19 @@ def load_conversation(filename):
     try:
         with open(path, "r", encoding="utf-8") as f:
             messages = json.load(f)
-        if not isinstance(messages, list) or not messages:
+        valid_roles = {"system", "user", "assistant"}
+        if (
+            not isinstance(messages, list)
+            or not messages
+            or not isinstance(messages[0], dict)
+            or messages[0].get("role") != "system"
+            or any(
+                not isinstance(message, dict)
+                or message.get("role") not in valid_roles
+                or not isinstance(message.get("content"), str)
+                for message in messages
+            )
+        ):
             raise ValueError("File does not contain a valid conversation.")
         print(f"Conversation loaded from: {path}")
         return messages
@@ -188,6 +212,9 @@ def load_conversation(filename):
         print(f"No such file: {path}")
         return None
     except (json.JSONDecodeError, ValueError) as e:
+        print(f"Could not load conversation: {e}")
+        return None
+    except (OSError, UnicodeDecodeError) as e:
         print(f"Could not load conversation: {e}")
         return None
 
@@ -220,7 +247,15 @@ def main():
         sys.exit(1)
 
     model = choose_model(installed_models)
+    if model is None:
+        print("Goodbye!")
+        return
+
     system_prompt = choose_personality()
+    if system_prompt is None:
+        print("Goodbye!")
+        return
+
     messages = [{"role": "system", "content": system_prompt}]
 
     print(f"Using model: {model}")
