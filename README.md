@@ -188,22 +188,27 @@ same question.
 
 ## Memory Investigation
 
-Scripted chat used:
+Live test run on 2026-09-24 used `llama3.2:latest` with the Beginner
+Tutor personality:
 
 1. "My favorite programming language is Python."
 2. "Explain interfaces."
 3. "What is my favorite programming language?"
 
-With the full history sent, step 3 correctly answers "Python" - because
-message 1 is still present in the list sent to Ollama alongside
-message 3, and the model can read it directly out of that context.
+With the full history sent, the answer to step 3 was:
 
-After dropping the early messages (removing message 1, and the
-assistant's reply to message 2, from `messages`) and re-asking "What is
-my favorite programming language?", the model no longer knows - it
+> You mentioned earlier that your favorite programming language is Python.
+
+I then used `/reset`, which removes all earlier user and assistant
+messages while retaining the system prompt, and asked the same question
+again. The answer was:
+
+> I'm not sure I should take a guess at that. What's your favorite
+> programming language?
+
 either says it has no way to know, or guesses generically, because the
-one message that contained that fact is no longer part of what gets
-sent.
+The changed answer demonstrates that the model had access to the fact
+only while the earlier message was included in the request.
 
 **Does the LLM actually "remember" the conversation?**
 No - not in the sense of the model itself holding a memory. Every call
@@ -300,6 +305,22 @@ context window, beyond what is implemented here:
    messages first, in pairs (user+assistant), so the conversation stays
    coherent rather than half-truncated mid-exchange.
 
+## Required Features Verification
+
+Tested on 2026-09-24 against a locally running Ollama instance:
+
+- [x] Dynamic user input: entered chat prompts in the running application.
+- [x] System prompt: selected the Beginner Tutor personality at startup.
+- [x] User and assistant messages: sent three live prompts and received replies.
+- [x] Multi-turn memory: the model recalled Python before `/reset` and did not after it.
+- [x] `/reset`: cleared the chat while retaining the system prompt.
+- [x] `/history`: printed the current conversation and excluded the system prompt.
+- [x] `/exit`: printed `Goodbye!` and ended cleanly.
+- [x] Empty input: pressing Enter displayed `Please type something - I can't send an empty message.`
+- [x] Connection-error handling: an unreachable local Ollama endpoint displayed the friendly connection message and exited without a traceback.
+- [x] Missing-file handling: `/load does-not-exist.json` displayed `No such file: conversations\does-not-exist.json`.
+- [x] Function-based structure: the flow is separated into connection, input, response, reset, history, save, and load functions in `main.py`.
+
 ## Git History
 
 This repository is committed incrementally (client setup, chat loop,
@@ -317,4 +338,4 @@ shows how the pieces were built up.
 | Course code | DSA5202 |
 | Assignment | Assignment 1 |
 | Repository URL | _fill in_ |
-| Date submitted | _fill in_ |
+| Date submitted | 2026-09-24 |
