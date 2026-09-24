@@ -337,5 +337,5 @@ shows how the pieces were built up.
 | Programme | MSc Data Science and Analytics |
 | Course code | DSA5202 |
 | Assignment | Assignment 1 |
-| Repository URL | _fill in_ |
+| Repository URL | https://github.com/Faido1011/ASSIGNMENT1 |
 | Date submitted | 2026-09-24 |
