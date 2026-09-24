@@ -332,8 +332,8 @@ shows how the pieces were built up.
 
 | Field | Value |
 |---|---|
-| Full name | _fill in_ |
-| Student ID | _fill in_ |
+| Full name | TWAGIRUMUKIZA Fidele |
+| Student ID | 2000260089 |
 | Programme | MSc Data Science and Analytics |
 | Course code | DSA5202 |
 | Assignment | Assignment 1 |
