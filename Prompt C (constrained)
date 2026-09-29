@@ -1,0 +1,195 @@
+Explain REST APIs.
+AI: REST APIs are like a set of rules for building web services that use HTTP methods (like GET, POST, PUT, DELETE) to interact with resources (like users, products, orders). Think of them as a blueprint for how to design APIs that are easy to use and scalable.
+
+### Key Concepts:
+1. **Resources**: Everything in a REST API is a resource. For example, a user, a product, or a blog post. Resources are identified by URLs (like `/users/1` or `/products/5`).
+
+2. **HTTP Methods**:
+   - **GET**: Retrieve a resource (e.g., `GET /users/1` to get user data).
+   - **POST**: Create a new resource (e.g., `POST /users` to add a new user).
+   - **PUT**: Update an existing resource (e.g., `PUT /users/1` to change a user’s info).
+   - **DELETE**: Remove a resource (e.g., `DELETE /users/1` to delete a user).
+
+3. **Stateless**: REST APIs don’t rely on cookies or sessions to track user state. Every request is independent.
+
+### Example:
+Imagine a simple API for managing users:
+```python
+# Example: A REST API for users
+from flask import Flask
+
+app = Flask(__name__)
+
+@app.route("/users/<int:user_id>")
+def get_user(user_id):
+    # GET method
+    return f"User {user_id} data"
+
+@app.route("/users", methods=["POST"])
+def create_user():
+    # POST method
+    new_user = {"id": 5, "name": "Alice"}
+    return f"Created user {new_user['id']}"
+
+@app.route("/users/3", methods=["PUT"])
+def update_user():
+    # PUT method
+    updated_user = {"id": 3, "name": "Bob"}
+    return f"Updated user {updated_user['id']}"
+
+@app.route("/users/3", methods=["DELETE"])
+def delete_user():
+    # DELETE method
+    return f"Deleted user 3"
+```
+
+### How It Works:
+- A user wants to get their data → sends a `GET` request to `/users/1`.
+- They want to create a new user → sends a `POST` to `/users`.
+- They want to update their info → sends a `PUT` to `/users/1`.
+- They want to delete their account → sends a `DELETE` to `/users/1`.
+
+### Tips:
+- Use JSON for data (e.g., `{"name": "Alice"}`).
+- Keep APIs simple and consistent.
+- Test with tools like Postman or curl.
+
+**Remember**: REST isn’t the only way to build APIs (like GraphQL or gRPC), but it’s a common and effective approach for web services.
+
+Explain recursion.
+AI: Recursion is when a function calls itself to solve a problem. Think of it as breaking a task into smaller, simpler versions of the same problem. For example, calculating the factorial of a number (5! = 5 × 4 × 3 × 2 × 1) can be done recursively:  
+- If the number is 0 or 1, return 1 (base case).  
+- Otherwise, return the number multiplied by the factorial of (number - 1).  
+
+### Key Parts:
+1. **Base Case**: The stopping condition. For factorials, it's when the number is 0 or 1.  
+2. **Recursive Step**: The function calls itself with a smaller argument (e.g., 5 → 5 × factorial(4)).  
+
+### Example: Factorial with Recursion
+```python
+def factorial(n):
+    if n == 0 or n == 1:
+        return 1
+    else:
+        return n * factorial(n - 1)
+
+print(factorial(5))  # Output: 120
+```
+
+### Why It Works:
+- Each call solves a smaller version of the problem.  
+- For 5!, the function calls `5 × factorial(4)`, then `4 × factorial(3)`, and so on.  
+
+### When to Use It:
+- Problems with repetitive steps (e.g., tree traversal, file systems).  
+- When the solution is naturally divided into smaller subproblems.  
+
+### Caution:
+- **Stack Overflow**: Too many recursive calls can crash the program (e.g., infinite loops).  
+- **Inefficiency**: Recursion can be slower than iteration because of repeated calculations.  
+
+### Example: Fibonacci (Recursive)
+```python
+def fibonacci(n):
+    if n <= 1:
+        return n
+    else:
+        return fibonacci(n-1) + fibonacci(n-2)
+
+print(fibonacci(10))  # Output: 55
+```
+
+### Tips:
+- Always test with small numbers to catch infinite loops.  
+- Use debugging tools (like print statements or debuggers) to track recursion steps.  
+
+**Remember**: Recursion is a tool, not a solution. Use it when the problem naturally breaks into subproblems.
+
+
+ What is dependency injection?
+AI: Dependency Injection is like a **recipe** for a recipe. Imagine you're making a cake, and the cake recipe needs specific ingredients (like flour, sugar, eggs). Instead of the cake recipe (your code) making those ingredients itself, it asks for them from an external source. This makes the cake recipe (your code) more flexible and easier to test.
+
+### Key Points:
+- **Dependencies**: Things a class needs to function (like other classes, services, or databases).
+- **Injection**: The class asks for dependencies instead of creating them itself.
+
+### Example:
+Imagine a `User` class that needs a `Database` class to fetch user data. Instead of the `User` class creating a `Database` instance, it asks for it. The `Database` is provided by an external service (like a constructor or a setter method).
+
+### Why It Works:
+- **Flexibility**: You can swap out dependencies easily (e.g., use a database, then a memory store).
+- **Testability**: You can mock dependencies during testing (e.g., use a fake database instead of the real one).
+
+### When to Use It:
+- When the code naturally breaks into smaller subproblems (e.g., calculating a factorial, traversing a tree).
+- When you want to avoid hard-coding dependencies.
+
+### Example in Code:
+```python
+class Database:
+    def get_user(self, user_id):
+        return f"User {user_id}"
+
+class User:
+    def __init__(self, db):
+        self.db = db
+
+    def get_data(self, user_id):
+        return self.db.get_user(user_id)
+
+# Usage
+db = Database()
+user = User(db)
+print(user.get_data(1))  # Outputs: User 1
+```
+
+### Tips:
+- **Avoid over-injecting**: Not all dependencies are suitable for injection (e.g., a class that needs to know its own dependencies).
+- **Use tools**: Frameworks like Spring (Java), Dagger (Java), or Angular (JavaScript) help manage dependencies automatically.
+
+### Summary:
+Dependency Injection is a way to make your code more flexible and testable by letting classes ask for their dependencies instead of creating them. It’s a pattern that helps keep your code modular and easy to maintain.
+
+
+Show me an example.
+AI: Sure! Here's a simple example of **dependency injection** using Python:
+
+---
+
+### 🧩 Example: User Class with Dependency Injection
+
+```python
+class Database:
+    def get_user(self, user_id):
+        return f"User {user_id}"
+
+class User:
+    def __init__(self, db):
+        self.db = db  # The database is injected here
+
+    def get_data(self, user_id):
+        return self.db.get_user(user_id)
+
+# Usage
+db = Database()  # The database is created externally
+user = User(db)  # The User class asks for the database
+print(user.get_data(1))  # Outputs: User 1
+```
+
+---
+
+### 📌 What's Happening?
+1. **Database** is a class that handles user data (e.g., fetching user info).
+2. **User** class doesn't create its own database. Instead, it asks for a `Database` instance (via `__init__`).
+3. The `User` class uses the injected `Database` to get data (e.g., `db.get_user(1)`).
+
+---
+
+### 🔄 Why It Works
+- **Flexibility**: You can swap out the `Database` (e.g., use a real database, a mock for testing).
+- **Testability**: During testing, you can mock the `Database` (e.g., use `unittest.mock` to return a fake user).
+
+---
+
+### 💡 Key Takeaway
+Dependency Injection is like a "recipe" for a class: it lets the class ask for its dependencies (like a database) instead of creating them itself. This makes your code more modular and easier to maintain.
